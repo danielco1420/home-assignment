@@ -5,6 +5,7 @@ services:
     depends_on:
       - web
       - be
+      - redis
     image: nginx:latest
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
@@ -16,3 +17,7 @@ services:
   be:
     build: ./be-demo
     image: r2-be-demo
+  redis:
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"
