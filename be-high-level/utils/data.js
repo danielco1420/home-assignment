@@ -1,7 +1,8 @@
 import Redis from 'ioredis';
+import schedule from 'node-schedule'
 
 const redis = new Redis({
-    host: process.env.REDIS_HOST || 'localhost',
+    host: process.env.REDIS_HOST || 'redis',
     port: process.env.REDIS_PORT || 6379
 });
 
@@ -39,7 +40,7 @@ export const removeToken = async (token) => {
 };
 
 export const getTotalWins = async () => {
-    return await redis.get('totalWins')
+    return parseInt(await redis.get('totalWins'));
 }
 
 export const tryLuck = async (token, didWin) => {
@@ -59,3 +60,7 @@ export const tryLuck = async (token, didWin) => {
     console.log("Updated Token Data:", tokenData);
     return { success: result };
 };
+
+schedule.scheduleJob('0 0 * * *', () => {
+    redis.set('totalWins', 0);
+})

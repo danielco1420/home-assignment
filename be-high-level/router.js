@@ -18,7 +18,7 @@ router.get('/all', async (req, res) => {
     }
 });
 
-router.post('/login', async (req, res) => {
+router.post('/api/login', async (req, res) => {
     try {
         const randomToken = generateNewToken(req);
         if (randomToken) {
@@ -29,7 +29,7 @@ router.post('/login', async (req, res) => {
                 res.status(500).send("Error saving token");
             }
         } else {
-            res.status(500).send("Error creating token");
+            res.status(401).send({ "error": "Wrong email and password" });
         }
     } catch (error) {
         console.log("Error in /login route:", error);
@@ -37,12 +37,12 @@ router.post('/login', async (req, res) => {
     }
 })
 
-router.post('/logout', async (req, res) => {
+router.post('/api/logout', async (req, res) => {
     try {
         const userToken = getUserToken(req);
         const success = await removeToken(userToken);
         if (success) {
-            res.send("OK");
+            res.send(`"OK"`);
         } else {
             res.status(500).send("Error removing token");
         }
@@ -52,12 +52,17 @@ router.post('/logout', async (req, res) => {
     }
 })
 
-router.post('/try_luck', async (req, res) => {
+router.post('/api/try_luck', async (req, res) => {
     try {
         const userToken = getUserToken(req);
-        const didWin = false // TODO: change result
+        const totalWins = await getTotalWins();
+        const didWin = totalWins > 30 ? Math.random() < 0.4 : Math.random() < 0.7
         const success = await tryLuck(userToken, didWin)
-        res.send({ "win": didWin })
+        if (success) {
+            res.send({ "win": didWin })
+        } else {
+            res.status(500).send("Error trying");
+        }
     } catch (error) {
 
     }
