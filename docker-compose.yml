@@ -22,8 +22,10 @@ services:
   be:
     # build: ./be-demo
     # image: r2-be-demo
-    build: ./be-high-level
-    image: r2-be-high-level
+    # build: ./be-high-level
+    # image: r2-be-high-level
+    build: ./be-low-level
+    image: r2-be-low-level
     deploy:
       resources:
         limits:
